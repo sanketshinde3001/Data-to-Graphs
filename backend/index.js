@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import axios from 'axios';
 import cors from 'cors';
 
+
 const app = express();
 // here the server port 5000 . use command 'nodemon' to run server in another terminal.
 // means when we fetch url from  frontend  , it must be like http://localhost:5000//xyz?name=abc...  , here see 5000 port number
@@ -11,6 +12,51 @@ const port = 5000;
 
 app.use(cors());
 app.use(express.json());
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/mydatabase', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.log(err));
+
+const TemperatureSchema = new mongoose.Schema({
+  cityName: {
+    type: String,
+    required: true
+  },
+  date: {
+    type: [Date],
+    required: true
+},
+temp: {
+    type: [Number],
+    required: true
+}
+});
+
+const Temperature = mongoose.model('Temperature', TemperatureSchema);
+
+app.get('/temperatures', async (req, res) => {
+  try {
+      const temperatures = await Temperature.find();
+      res.json(temperatures);
+  } catch (err) {
+      res.status(500).send(err);
+  }
+});
+
+app.post('/temperatures', async (req, res) => {
+  const { cityName,date, temp } = req.body;
+  const newTemperature = new Temperature({ cityName,date, temp });
+  try {
+      const savedTemperature = await newTemperature.save();
+      res.json(savedTemperature);
+  } catch (err) {
+      res.status(500).send(err);
+  }
+});
 
 // below is api route to get information about wather in upcoming 5 days
 app.get('/fetchWeather/:city', async (req, res) => {
@@ -25,8 +71,10 @@ app.get('/fetchWeather/:city', async (req, res) => {
     const response = await axios.get(url);
     const weatherData = response.data;
     // this will give all data of weather
-
-    res.json(weatherData.forecast.forecastday);
+    res.json({
+      forecast: weatherData.forecast.forecastday,
+      location: weatherData.location.name
+  });
     // this will give only data of 5 days weather
   } catch (error) {
     res.status(500).send(error);
