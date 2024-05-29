@@ -93,8 +93,8 @@ function App() {
       {
         label: 'Average Temperature (°C)',
         data: temp,
-        backgroundColor: 'rgba(75,192,192,0.2)',
-        borderColor: 'rgba(75,192,192,1)',
+        backgroundColor: 'rgba(255,99,71,1)',
+        borderColor: 'rgba(255,255,255,1)',
         borderWidth: 1,
       },
     ],
