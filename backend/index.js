@@ -40,7 +40,8 @@ const Temperature = mongoose.model('Temperature', TemperatureSchema);
 
 app.get('/temperatures', async (req, res) => {
   try {
-      const temperatures = await Temperature.find();
+      const temperatures1 = await Temperature.find();
+      const temperatures = temperatures1.reverse();
       res.json(temperatures);
   } catch (err) {
       res.status(500).send(err);

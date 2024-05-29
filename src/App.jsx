@@ -67,6 +67,7 @@ function App() {
         console.log("Add Temperature")
         console.log(cityName,date,temp)
         const response = await axios.post('http://localhost:5000/temperatures', {cityName, date, temp });
+        fetchHistoryData()
     } catch (error) {
         console.error('Error adding temperature:', error);
     }
@@ -162,7 +163,7 @@ function App() {
     </div>
     <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4">History Data</h2>
-        <table className="table-auto">
+        {/* <table className="table-auto">
           <thead>
             <tr>
               <th className="px-4 py-2">City</th>
@@ -185,7 +186,34 @@ function App() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> */}
+        <table className="table-auto">
+  <thead>
+    <tr>
+      <th className="px-4 py-2">City</th>
+      <th className="px-4 py-2">Date</th>
+      <th className="px-4 py-2">Temperature (°C)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {historyData.map((record, index) => (
+      <tr key={index}>
+        <td className="border px-4 py-2">{record.cityName}</td>
+        <td className="border px-4 py-2">
+          {record.date.map((date, dateIndex) => (
+            <div key={dateIndex} className="py-1">{date.substring(0, 10)}</div>
+          ))}
+        </td>
+        <td className="border px-4 py-2">
+          {record.temp.map((temperature, tempIndex) => (
+            <div key={tempIndex} className="py-1">{temperature}</div>
+          ))}
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
       </div>
     </div>
   );
